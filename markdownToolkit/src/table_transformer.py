@@ -1,6 +1,18 @@
-# output file content
-from msilib import sequence
+'''
+【效果】
+name age
+Roman 12
+Jack 22
 
+
+|name|age|
+|-|-|
+|Roman|22|
+|Jack|22|
+
+【期待改进】
+控制表格居中格式，可以修改一波。通过命令行参数控制，默认左对齐`|-|-|`。
+'''
 
 content = []
 with open('source.txt', 'r', encoding='utf-8') as fp:
