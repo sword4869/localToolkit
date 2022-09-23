@@ -1,19 +1,24 @@
 import requests
 import time
-input_path = 'source.txt'
-output_path = 'destination.txt'
 
+
+##################    CONFIGURATION START    ##################
+input_path = '../source.txt'
+output_path = '../destination.txt'
+relativePath = '/image'
+
+###################    CONFIGURATION END    ###################
 
 # 从一行中提取图片的url
-# 成功则返回图片连接，失败则返回-1
+# 成功则返回图片连接，失败则返回None
 def getUrl(line):
     length = len(line)
     # `![]()`最低要求
     if(length < 5):
-        return -1
+        return None
     # 前缀
     if(line.startswith('![') == False):
-        return -1
+        return None
     # 查括号
     l_bracket = line.find('(')
     r_bracket = line.find(')')
@@ -31,30 +36,33 @@ def getUrl(line):
             return content[0:postfix] + i
 
     # 后缀格式不匹配
-    return -1
+    return None
     pass
 
 # 下载图片，并存储在image文件夹下
 def downloadImage(url):
-    print(f'url[{url}] is dealing...')
+    # print(f'\033[4m[url[{url}] is dealing...\033[m')
 
     # 下载一个图片
     response = requests.get(url)
     postfix = url.rfind('.')
     time_stamp = int(time.time())
     imageName = f'{time_stamp}{url[postfix:]}'
+    # 下载的图片放在image文件夹
     imageNameSave = '../image' + '/' + imageName
+    # 在markdown的`![]()`中文档相对于image的路径
+    imageNameMarkdown = relativePath + '/' + imageName
 
     # 写入图片
     with open(imageNameSave, 'wb') as fp:
         # 判断状态码
         if response .status_code == 404:
             print(f'{response.status_code}.status_code ={url}')
-            return -1
+            return None
         # 写入数据
         else:
             fp.write(response.content)
-            newLine = '![{0}]({1})\n'.format(imageName, imageNameMarkdown)
+            newLine = f'![{imageName}]({imageNameMarkdown})\n'
             return newLine
     pass
 
@@ -65,12 +73,15 @@ with open(input_path, 'r', encoding="utf-8") as fp:
     for line in fp:
         # 从一行中提取图片的url
         url = getUrl(line)
-        print(line)
         # 如果有，则下载，并修改成本地图片的格式
-        if(url != 0):
+        if(url != None):
+            print(f'\033[44m{line}\033[m')
             newLine = downloadImage(url)
-            if(newLine != 0):
+            if(newLine != None):
                 lines.append(newLine)
+                print(f'\033[45m{newLine}\033[m')
+            else:
+                raise Exception('404:', line)
         # 没有，就原封不动
         else:
             lines.append(line)
