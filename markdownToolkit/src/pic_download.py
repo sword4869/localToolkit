@@ -1,20 +1,25 @@
 import requests
-
+import time
 input_path = 'source.txt'
 output_path = 'destination.txt'
 
+
+# 从一行中提取图片的url
+# 成功则返回图片连接，失败则返回-1
 def getUrl(line):
     length = len(line)
     # `![]()`最低要求
     if(length < 5):
-        return 0
+        return -1
     # 前缀
     if(line.startswith('![') == False):
-        return 0
+        return -1
     # 查括号
     l_bracket = line.find('(')
     r_bracket = line.find(')')
-    # 找到了url还不够,`https://xxxx.jpg?size=960`，可能会有这样的修饰，比如csdn。
+    # 找到了url还不够,`
+    # 第一，不算图片格式。`https://xxx.md`
+    # 第二，修饰问题。`https://xxxx.jpg?size=960`，可能会有这样的修饰，比如csdn。
     content = line[l_bracket + 1:r_bracket]
 
     # 截取到图片后缀格式
@@ -25,32 +30,30 @@ def getUrl(line):
         if postfix != -1:
             return content[0:postfix] + i
 
-    return 0
+    # 后缀格式不匹配
+    return -1
     pass
 
-
+# 下载图片，并存储在image文件夹下
 def downloadImage(url):
-    print('url[{0}] is dealing.'.format(url))
+    print(f'url[{url}] is dealing...')
 
     # 下载一个图片
     response = requests.get(url)
-    global imageCount
     postfix = url.rfind('.')
-    imageName = str(imageCount) + url[postfix:]
-    imageNameSave = imageDirSave + '/' + imageName
-    imageNameMarkdown = imageDirMarkdown + '/' + imageName
+    time_stamp = int(time.time())
+    imageName = f'{time_stamp}{url[postfix:]}'
+    imageNameSave = '../image' + '/' + imageName
 
     # 写入图片
     with open(imageNameSave, 'wb') as fp:
         # 判断状态码
         if response .status_code == 404:
-            print(['response.status_code'], response.status_code, url)
-            return 0
+            print(f'{response.status_code}.status_code ={url}')
+            return -1
         # 写入数据
         else:
             fp.write(response.content)
-            imageCount += 1
-
             newLine = '![{0}]({1})\n'.format(imageName, imageNameMarkdown)
             return newLine
     pass
