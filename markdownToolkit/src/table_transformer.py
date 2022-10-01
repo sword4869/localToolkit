@@ -14,8 +14,11 @@ Jack 22
 控制表格居中格式，可以修改一波。通过命令行参数控制，默认左对齐`|-|-|`。
 '''
 
+
+input_path = 'source.txt'
+output_path = 'destination.txt'
 content = []
-with open('source.txt', 'r', encoding='utf-8') as fp:
+with open(input_path, 'r', encoding='utf-8') as fp:
     for index, line in enumerate(fp):
         # |-|-|
         if index == 1:
@@ -37,5 +40,5 @@ with open('source.txt', 'r', encoding='utf-8') as fp:
             line = '|'.join(lines) 
             content.append(line)
 
-with open('destination.txt', 'w', encoding='utf-8') as fp:
+with open(output_path, 'w', encoding='utf-8') as fp:
     fp.writelines([i+'\n' for i in content])
