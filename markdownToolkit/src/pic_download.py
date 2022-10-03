@@ -46,7 +46,7 @@ def downloadImage(url):
     # 下载一个图片
     response = requests.get(url)
     postfix = url.rfind('.')
-    time_stamp = int(time.time())
+    time_stamp = str(time.time()).replace('.', '')
     imageName = f'{time_stamp}{url[postfix:]}'
     # 下载的图片放在image文件夹
     imageNameSave = '../image' + '/' + imageName
@@ -75,11 +75,11 @@ with open(input_path, 'r', encoding="utf-8") as fp:
         url = getUrl(line)
         # 如果有，则下载，并修改成本地图片的格式
         if(url != None):
-            print(f'\033[44m{line}\033[m')
+            print(f'>>> {line}')
             newLine = downloadImage(url)
             if(newLine != None):
                 lines.append(newLine)
-                print(f'\033[45m{newLine}\033[m')
+                print(f'<<< {newLine}')
             else:
                 raise Exception('404:', line)
         # 没有，就原封不动
