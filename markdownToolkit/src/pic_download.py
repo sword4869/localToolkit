@@ -1,12 +1,13 @@
 import requests
 import time
+from os import path
 
 
 ##################    CONFIGURATION START    ##################
-input_path = '../source.txt'
-output_path = '../destination.txt'
-relativePath = '/image'
-
+parentPath = path.dirname(__file__)
+input_path = path.abspath(path.join(parentPath, '../source.txt'))
+output_path = path.abspath(path.join(parentPath, '../destination.txt'))
+relativePath = path.abspath(path.join(parentPath, '/image'))
 ###################    CONFIGURATION END    ###################
 
 # 从一行中提取图片的url
