@@ -46,6 +46,7 @@ def train():
         if discriminator(pos_status, img):
             continue
         click_bonus(pos_submit)
+        return True
 
 def test():
     pos = (533, 1400)
