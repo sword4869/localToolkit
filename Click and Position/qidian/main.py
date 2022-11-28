@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
     import yaml
 
-    with open('pos.yaml') as f:
+    with open('pos.yaml', 'r', encoding='utf-8') as f:
         data = yaml.safe_load(f)
 
     if args.device == None:
