@@ -1,0 +1,21 @@
+vivox9:
+  size: 1080x1920
+  # 红色可抢
+  color_true: (229, 53, 62)
+  # 红包记录的位置
+  pos_status: (887, 789)
+  # 投票按钮
+  pos_submit: (533, 1400)
+  # 空白退出
+  pos_other: (1052, 846)
+
+realmeq3pro:
+  size: 1080x2400
+  # 红色可抢
+  color_true: (229, 53, 62)
+  # 红包记录的位置
+  pos_status: (833, 833)
+  # 投票按钮
+  pos_submit: (533, 1400)
+  # 空白退出
+  pos_other: (900, 1700)
