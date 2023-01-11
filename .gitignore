@@ -1,3 +1,5 @@
 markdownToolkit/source.txt
 markdownToolkit/destination.txt
+markdownToolkit/image/*
+!markdownToolkit/image/.gitkeep
 Click and Position/qidian/1.png

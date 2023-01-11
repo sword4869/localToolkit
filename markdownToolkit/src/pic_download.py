@@ -1,13 +1,15 @@
-import requests
+import os
 import time
-from os import path
 
+import requests
 
 ##################    CONFIGURATION START    ##################
-parentPath = path.dirname(__file__)
-input_path = path.abspath(path.join(parentPath, '../source.txt'))
-output_path = path.abspath(path.join(parentPath, '../destination.txt'))
-relativePath = path.abspath(path.join(parentPath, '/image'))
+parentPath = os.path.dirname(__file__)
+input_path = os.path.abspath(os.path.join(parentPath, '../source.txt'))
+output_path = os.path.abspath(os.path.join(parentPath, '../destination.txt'))
+imageNameSavePath = os.path.abspath(os.path.join(parentPath, '../image'))
+# 在markdown的`![]()`中文档相对于image的路径
+imageNameMarkdownPath = '../../images'
 ###################    CONFIGURATION END    ###################
 
 # 从一行中提取图片的url
@@ -50,9 +52,10 @@ def downloadImage(url):
     time_stamp = str(time.time()).replace('.', '')
     imageName = f'{time_stamp}{url[postfix:]}'
     # 下载的图片放在image文件夹
-    imageNameSave = '../image' + '/' + imageName
+    imageNameSave = imageNameSavePath + '/' + imageName
     # 在markdown的`![]()`中文档相对于image的路径
-    imageNameMarkdown = relativePath + '/' + imageName
+    imageNameMarkdownPath_all = imageNameMarkdownPath + '/' + imageName
+
 
     # 写入图片
     with open(imageNameSave, 'wb') as fp:
@@ -63,10 +66,18 @@ def downloadImage(url):
         # 写入数据
         else:
             fp.write(response.content)
-            newLine = f'![{imageName}]({imageNameMarkdown})\n'
+            newLine = f'![{imageName}]({imageNameMarkdownPath_all})\n'
             return newLine
     pass
 
+no_gitkeep_img_paths = os.listdir(imageNameSavePath)
+no_gitkeep_img_paths.remove('.gitkeep')
+for img_path in no_gitkeep_img_paths:
+    img_path = os.path.join(imageNameSavePath, img_path)
+    print(img_path)
+    os.remove(img_path)
+
+print('----')
 
 lines = []
 with open(input_path, 'r', encoding="utf-8") as fp:
