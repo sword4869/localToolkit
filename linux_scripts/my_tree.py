@@ -16,6 +16,7 @@ def parser(cmd=None):
 
     p.add_argument('-L', '--max_layer', type=int, default='1', help='dont show hidden files or directories')
     p.add_argument('-a', '--is_show_hidden', action="store_true")
+    p.add_argument('-c', '--is_show_compact', action="store_true")
 
     if cmd is None:
         return p.parse_args()
@@ -82,6 +83,10 @@ def tree_dir(base_dir, layer=1, is_last_dir=False, prefix=""):
         lines.append(line)
         if is_debug:
             print(line)
+
+        if args.is_show_compact:
+            if layer > 1 and index > 4:
+                break
 
     for index, dir in enumerate(dir_lst):
         dir_path = os.path.join(base_dir, dir)
