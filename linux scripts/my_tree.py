@@ -15,7 +15,7 @@ def parser(cmd=None):
     p = configargparse.ArgumentParser()
 
     p.add_argument('-L', '--max_layer', type=int, default='1', help='dont show hidden files or directories')
-    p.add_argument('-a', '---is_show_hidden', action="store_true")
+    p.add_argument('-a', '--is_show_hidden', action="store_true")
 
     if cmd is None:
         return p.parse_args()
