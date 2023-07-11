@@ -1,5 +1,5 @@
 import os
-
+import sys
 import configargparse
 
 # -a 显示所有文件
@@ -15,10 +15,11 @@ char_set = {
 def parser(cmd=None):
     p = configargparse.ArgumentParser()
 
-    p.add_argument('-L', '--max_layer', type=int, default='1', help='dont show hidden files or directories')
-    p.add_argument('-a', '--is_show_hidden', action="store_true")
-    p.add_argument('-c', '--is_show_compact', action="store_true")
+    p.add_argument('-L', '--max_layer', type=int, default='1', help='the number of limited layers')
+    p.add_argument('-a', '--is_show_hidden', action="store_true", help='dont show hidden files or directories')
+    p.add_argument('-c', '--compact_files', type=int, default=sys.maxsize, help='maximum number of showed files under the same directory, default is infinity')
     p.add_argument('-d', '--directory', type=str, default='.', help='working directory')
+
 
     if cmd is None:
         return p.parse_args()
@@ -27,8 +28,8 @@ def parser(cmd=None):
 
 class Tree:
     def __init__(self, args) -> None:
-        self.is_show_compact = args.is_show_compact
         self.is_show_hidden = args.is_show_hidden
+        self.compact_files = args.compact_files
         self.directory = args.directory
 
         self.max_layer = args.max_layer
@@ -97,9 +98,8 @@ class Tree:
             if is_debug:
                 print(line)
 
-            if self.is_show_compact:
-                if layer > 1 and index > 4:
-                    break
+            if layer > 1 and (index + 1) >= self.compact_files:
+                break
 
         for index, dir in enumerate(dir_lst):
             dir_path = os.path.join(base_dir, dir)
