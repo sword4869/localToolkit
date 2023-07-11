@@ -1,4 +1,7 @@
-powershell 是 通用的， 但是 PostMessageA 是 windows的函数
+@echo off
+powershell (Add-Type '[DllImport(\"user32.dll\")]^public static extern int PostMessage(int hWnd, int hMsg, int wParam, int lParam);' -Name a -Pas)::PostMessage(-1,0x0112,0xF170,2)
+
+@REM powershell 是 通用的， 但是 PostMessageA 是 windows的函数
 
 @REM BOOL PostMessageA(
 @REM   [in, optional] HWND   hWnd,
@@ -15,5 +18,3 @@ powershell 是 通用的， 但是 PostMessageA 是 windows的函数
 @REM     2 (显示器正在关闭)
 
 @REM 动动鼠标、键盘就亮了
-powershell (Add-Type '[DllImport(\"user32.dll\")]^public static extern int PostMessage(int hWnd, int hMsg, int wParam, int lParam);' -Name a -Pas)::PostMessage(-1,0x0112,0xF170,2)
-
