@@ -4,10 +4,11 @@ import time
 import cv2
 import numpy as np
 import yaml
+import configargparse
 
 def swipe_flush():
     '''swipe screen to flush'''
-    x1, y1, x2, y2, duration = 1050, 600, 1050, 1600, 500
+    x1, y1, x2, y2, duration = 1050, 600, 1050, 1600, 100
     cmd = f"adb shell input swipe {x1} {y1} {x2} {y2} {duration}"
     subprocess.check_output(cmd, shell=True)
 
@@ -21,17 +22,17 @@ def screenshot():
         subprocess.check_output(cmd, shell=True)
 
 
-def discriminator(pos: tuple, color_true: tuple, cv_img, gui=False):
+def discriminator(pos: tuple, COLOR_TRUE: tuple, cv_img, gui=False):
     '''discriminator status'''
     color_now = cv_img[pos[1], pos[0]]
     color_now = tuple(color_now[::-1].tolist())
-    text = str(color_now)
     
     if gui:
-        cv2.putText(cv_img, text, (pos[0] - 300, pos[1] + 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+        cv2.putText(cv_img, str(color_now), (pos[0] - 300, pos[1] + 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+        cv2.putText(cv_img, str(COLOR_TRUE), (pos[0] - 300, pos[1] + 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
     else:
         print(color_now)
-    return color_true == color_now
+    return COLOR_TRUE == color_now
 
 
 def click_bonus(pos: tuple):
@@ -46,16 +47,23 @@ def close_failure(pos: tuple):
     cmd = f'adb shell input tap {pos[0]} {pos[1]}'
     subprocess.check_output(cmd, shell=True)
 
-
+def callback_click(event, x, y, flags, param):
+    if event == cv2.EVENT_FLAG_LBUTTON:
+        x = x * RESIZE
+        y = y * RESIZE
+        print(f'click {x} {y}')
+        cmd = f'adb shell input tap {x} {y}'
+        subprocess.check_output(cmd, shell=True)
+    if event == cv2.EVENT_FLAG_RBUTTON:
+        time.sleep(5)
+        
 def run(gui=False):
     i = 0
+    cv2.namedWindow('image', cv2.WINDOW_GUI_NORMAL)
+    cv2.setMouseCallback('image', callback_click)
     while True:
-        swipe_flush()
-        time.sleep(1)
         screenshot()
-
-        if gui is False:
-            time.sleep(sleep_second)
+        swipe_flush()
         img = Image.open('1.png')
 
         discriminate = False
@@ -64,11 +72,11 @@ def run(gui=False):
             cv_img = cv2.cvtColor(cv_img, cv2.COLOR_RGB2BGR)
 
             # 检测颜色
-            discriminate = discriminator(pos_status, color_true, cv_img, gui)
+            discriminate = discriminator(POS_STATUS, COLOR_TRUE, cv_img, gui)
 
             # 标注位置
-            cv2.circle(cv_img, pos_status, 5, (0, 0, 255), -1)
-            cv2.rectangle(cv_img, (pos_status[0] - 20, pos_status[1] - 40), (pos_status[0] + 100, pos_status[1] + 40), (0, 255, 0), 4)
+            cv2.circle(cv_img, POS_STATUS, 5, (0, 0, 255), -1)
+            cv2.rectangle(cv_img, (POS_STATUS[0] - 20, POS_STATUS[1] - 40), (POS_STATUS[0] + 100, POS_STATUS[1] + 40), (0, 255, 0), 4)
 
             # 表示更新变化
             i += 100
@@ -78,15 +86,21 @@ def run(gui=False):
             cv2.putText(cv_img, current_time, (300, 100), cv2.FONT_HERSHEY_SIMPLEX, 2.5, (0, 255, 0), 3)
 
             # 缩小显示
-            cv_img = cv2.resize(cv_img, (cv_img.shape[1]//3, cv_img.shape[0]//3), interpolation=cv2.INTER_AREA)
+            cv_img = cv2.resize(cv_img, (cv_img.shape[1]// RESIZE, cv_img.shape[0]// RESIZE), interpolation=cv2.INTER_AREA)
             cv2.imshow('image', cv_img)
-            if cv2.waitKey(sleep_second * 1000) == ord('q'):
+            if cv2.waitKey(SLEEP_MS) == ord('q'):
                 break
-        if discriminate is False:
-            continue
-        img.show()
-        click_bonus(pos_submit)
-        close_failure(pos_other)
+        else:
+            time.sleep(SLEEP_MS // 1000)
+
+        if discriminate:
+            print('trigger', time.strftime("%H:%M:%S", time.localtime()))
+            click_bonus(POS_SUBMIT)
+            swipe_flush()
+            img.show()
+
+            # 发现不需要关闭，直接在边角点击即可关闭。而下滑刷新恰好就是点击边角
+            # close_failure(POS_OTHER)
 
 def debug():
     # mouse callback function
@@ -108,23 +122,31 @@ def debug():
 
 
 if __name__ == '__main__':
-
     with open('pos.yaml', 'r', encoding='utf-8') as f:
         data = yaml.safe_load(f)
 
-    device_type = data['device_type']
-    data_device = data[device_type]
+    DEVICE_TYPE = data['device_type']
+    data_device = data[DEVICE_TYPE]
 
     # 红色可抢
-    color_true = eval(data_device['color_true'])
+    COLOR_TRUE = eval(data_device['color_true'])
     # 红包记录的位置
-    pos_status = eval(data_device['pos_status'])
+    POS_STATUS = eval(data_device['pos_status'])
     # 投票按钮
-    pos_submit = eval(data_device['pos_submit'])
+    POS_SUBMIT = eval(data_device['pos_submit'])
     # 空白退出
-    pos_other = eval(data_device['pos_other'])
+    POS_OTHER = eval(data_device['pos_other'])
+    # 缩小显示
+    RESIZE = data_device['resize']
 
-    sleep_second = data['sleep_second']
+    SLEEP_MS = data['sleep_ms']
+
+    parser = configargparse.ArgumentParser()
+    parser.add_argument('-s', '--sleep_ms', type=int, default=None)
+    args = parser.parse_args()
+
+    if args.sleep_ms:
+        SLEEP_MS = args.sleep_ms
 
     if data['debug']:
         debug()

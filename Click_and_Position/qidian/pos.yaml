@@ -19,7 +19,9 @@ realmeq3pro:
   pos_submit: (533, 1400)
   # 空白退出
   pos_other: (900, 1700)
+  # 缩小显示
+  resize: 3
 
 device_type: realmeq3pro
 debug: false
-sleep_second: 5
+sleep_ms: 500
