@@ -3,9 +3,7 @@ from PIL import Image
 import time
 import cv2
 import numpy as np
-from pyparsing import col
-from regex import F
-from sympy import false, true
+import yaml
 
 def swipe_flush():
     '''swipe screen to flush'''
@@ -60,7 +58,7 @@ def run(gui=False):
             time.sleep(sleep_second)
         img = Image.open('1.png')
 
-        discriminate = false
+        discriminate = False
         if gui:
             cv_img = np.array(img)
             cv_img = cv2.cvtColor(cv_img, cv2.COLOR_RGB2BGR)
@@ -110,7 +108,6 @@ def debug():
 
 
 if __name__ == '__main__':
-    import yaml
 
     with open('pos.yaml', 'r', encoding='utf-8') as f:
         data = yaml.safe_load(f)
@@ -132,4 +129,4 @@ if __name__ == '__main__':
     if data['debug']:
         debug()
     else:
-        run(gui=true)
+        run(gui=True)
