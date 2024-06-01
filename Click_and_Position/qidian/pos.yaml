@@ -19,3 +19,7 @@ realmeq3pro:
   pos_submit: (533, 1400)
   # 空白退出
   pos_other: (900, 1700)
+
+device_type: realmeq3pro
+debug: false
+sleep_second: 5
