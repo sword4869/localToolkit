@@ -21,6 +21,10 @@ realmeq3pro:
   pos_other: (900, 1700)
   # 缩小显示
   resize: 3
+  # 月票
+  pos_month: (96, 450)
+  # 推荐票
+  pos_recommend: (315, 453)
 
 device_type: realmeq3pro
 debug: false

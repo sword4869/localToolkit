@@ -1,0 +1,6 @@
+pyyaml
+numpy
+pyautogui
+tqdm
+imapclient
+requests

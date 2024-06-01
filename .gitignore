@@ -1,6 +1,9 @@
 __pycache__
+TextServer/logs/*
+!TextServer/logs/.gitkeep
 markdownToolkit/source.txt
 markdownToolkit/destination.txt
 markdownToolkit/image/*
 !markdownToolkit/image/.gitkeep
-Click_and_Position/qidian/1.png
+qidian/qidian_ticket/log/*
+qidian/swipe/1.png

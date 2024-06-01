@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hello</title>
+
+    <style>
+      body {
+        background-color: yellowgreen;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- 只要确保不要忘记在你的 HTML 表单中设置 enctype="multipart/form-data" 属性就可以了。否则浏览器将不会传送你的文件 -->
+    <form method="post" enctype="multipart/form-data">
+      <p>Enter Text:</p>
+      <p><textarea name="my_text"></textarea></p>
+
+      <p>Enter file</p>
+      <p><input name="my_file" type="file" multiple="multiple"/></p>
+
+      <!-- <p>Enter fileDirectory</p>
+      <p><input name="my_file_directory" type="file" webkitdirectory/></p> -->
+
+      <p><input type="submit" value="submit" /></p>
+    </form>
+  </body>
+</html>
