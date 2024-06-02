@@ -1,3 +1,4 @@
+from certifi import contents
 from imapclient import IMAPClient       # pip install imapclient
 import email
 
@@ -22,14 +23,14 @@ class MyEmail:
             # 如果出现掉线的情况，那么重连
             self.build_connect()
 
-    def get_spare(self):
-        content = None
+    def get_contents(self, filter=True):
+        contents = []
 
         # 收信箱
         self.server.select_folder('INBOX')
         # 查看未读邮件，下面fetch()后自动标记为已读，就不会重复。
         messages = self.server.search("UNSEEN")
-        # 遍历每封邮件
+        # 遍历每封邮件，我们只需要最新的一封
         for uid, message_data in self.server.fetch(messages, "RFC822").items():
             # 转为email对象
             message = email.message_from_bytes(message_data[b"RFC822"])
@@ -44,9 +45,16 @@ class MyEmail:
                 # application/octet-stream
                 if sub_message.get_content_type() == 'application/octet-stream':
                     # The actual text/HTML email contents, or attachment data
-                    content = sub_message.get_payload(decode=True)
-                    return content  # 字节
-        return content
+                    content = sub_message.get_payload(decode=True)  # 字节
+                    
+                    if filter:
+                        if content.startswith(b'GET /Atom.axd/Api/HongBao/GetSquare?lastHongbaoId=0&pn=1&pz=20&type=1'):
+                            contents.append(['yuepiao', content])
+                        elif content.startswith(b'GET /Atom.axd/Api/HongBao/GetSquare?lastHongbaoId=0&pn=1&pz=20&type=2'):
+                            contents.append(['tuijianpiao', content])
+                    else:
+                        contents.append(content)
+        return contents
 
 if __name__ == '__main__':
     myEmail = MyEmail()

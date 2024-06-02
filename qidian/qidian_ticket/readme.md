@@ -1,11 +1,46 @@
+- [adbswipe, just\_swipe](#adbswipe-just_swipe)
+- [make\_borgus](#make_borgus)
+- [make\_headers](#make_headers)
+- [🚀onestand\_post](#onestand_post)
+- [解析](#解析)
+  - [月票和推荐票](#月票和推荐票)
+  - [headers](#headers)
 
-# 过程
+---
 
-小黄鸟捕获请求或响应，共享给邮箱发送给自己。
+# adbswipe, just_swipe
 
-instant_post执行，读取邮箱，写入到email.yml中。去掉GET描述信息第一行，作为headers.yml。
+实时adb滑动刷新，识图和自动点击投票。
 
-GetHeaders根据headers.yml来补全header。
+技术栈：
+- 用adb来swipe刷新、点击投票。
+- 用opencv基于截图的颜色来判断是否有票。
+
+`pos.yaml` 是配置信息。关键坐标、颜色等信息。
+
+# make_borgus
+
+批量设置手机时钟，刷新出一波抓包信息。
+
+```bash
+# 提前进入shell，然后点击窗口，让pyguiauto自动输入
+PS C:\Users\lab> adb shell
+RMX2205CN:/ $ su
+```
+
+然后，我们再进入小黄鸟，分享网易邮箱给自己。
+
+# make_headers
+
+调试用的，将邮箱里的东西都保存到 `log/test` 下。
+
+# 🚀onestand_post
+
+小黄鸟捕获请求和响应，共享给邮箱发送给自己。
+
+读取邮箱，去掉GET描述信息第一行，写入到yml中。还会根据GET头还分类月票还是推荐票。
+
+GetHeaders根据yml来补全header。
 
 Poster加载header，发送请求，获取到红包信息的json文件。
 
@@ -18,6 +53,8 @@ Poster加载header，发送请求，获取到红包信息的json文件。
 推荐票的api是`https://druidv6.if.qidian.com/Atom.axd/Api/HongBao/GetSquare?lastHongbaoId=0&pn=1&pz=20&type=2`
 
 区别是type
+
+既然是不同api，那么headers信息也需要不同。也就是说，我们需要分别刷新和抓包。
 
 ## headers
 ```json

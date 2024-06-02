@@ -4,3 +4,6 @@ pyautogui
 tqdm
 imapclient
 requests
+Pillow
+opencv-python
+configargparse

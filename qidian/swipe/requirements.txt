@@ -1,5 +1,0 @@
-Pillow
-opencv-python
-pyyaml
-numpy
-configargparse

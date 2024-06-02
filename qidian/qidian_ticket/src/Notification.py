@@ -1,3 +1,4 @@
+import threading
 import winsound # windows
 import time
 import requests
@@ -12,7 +13,6 @@ class Notification:
         duration = 2000  # millisecond  
         freq = 600  # Hz
         winsound.Beep(freq, duration)
-        time.sleep(1)
 
     def local_alter(self):
         ###
@@ -27,6 +27,16 @@ class Notification:
         # 'SystemQuestion', Question
         ###
         winsound.PlaySound("SystemHand", winsound.SND_ALIAS)
+
+    def start_local_beep(self):
+        # 开启线程，播放声音
+        t = threading.Thread(target=self.local_beep)
+        t.start()
+    
+    def start_local_alter(self):
+        # 开启线程，播放声音
+        t = threading.Thread(target=self.local_alter)
+        t.start()
     
     def remote(self, title='ok', content=random.random()):
         ###
